@@ -41,8 +41,9 @@ internal val LocalUIKitInteropContainer = staticCompositionLocalOf<UIKitInteropC
 /**
  * A container that controls interop views/components.
  */
-internal class UIKitInteropContainer: InteropContainer<UIView> {
-    val containerView: UIView = UIKitInteropContainerView()
+internal class UIKitInteropContainer(
+    val containerView: UIView,
+) : InteropContainer<UIView> {
     override var rootModifier: TrackInteropModifierNode<UIView>? = null
     override var interopViews = mutableSetOf<UIView>()
         private set
@@ -57,17 +58,6 @@ internal class UIKitInteropContainer: InteropContainer<UIView> {
         nativeView.removeFromSuperview()
         interopViews.remove(nativeView)
     }
-}
-
-private class UIKitInteropContainerView: UIView(CGRectZero.readValue()) {
-    /**
-     * We used simple solution to make only this view not touchable.
-     * Other view added to this container will be touchable.
-     */
-    override fun hitTest(point: CValue<CGPoint>, withEvent: UIEvent?): UIView? =
-        super.hitTest(point, withEvent).takeIf {
-            it != this
-        }
 }
 
 /**

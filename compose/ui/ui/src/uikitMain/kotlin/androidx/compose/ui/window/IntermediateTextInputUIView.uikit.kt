@@ -64,8 +64,10 @@ import platform.UIKit.UITextRange
 import platform.UIKit.UITextSelectionRect
 import platform.UIKit.UITextStorageDirection
 import platform.UIKit.UIView
+import platform.UIKit.UIPress
 import platform.darwin.NSInteger
 
+private val NoOpOnKeyboardPresses: (Set<*>) -> Unit = {}
 /**
  * Hidden UIView to interact with iOS Keyboard and TextInput system.
  * TODO maybe need to call reloadInputViews() to update UIKit text features?
@@ -83,19 +85,25 @@ internal class IntermediateTextInputUIView(
                 hideEditMenu()
             }
         }
-    var keyboardEventHandler: KeyboardEventHandler? = null
+
+    /**
+     * Callback to handle keyboard presses. The parameter is a [Set] of [UIPress] objects.
+     * Erasure happens due to K/N not supporting Obj-C lightweight generics.
+     */
+    var onKeyboardPresses: (Set<*>) -> Unit = NoOpOnKeyboardPresses
 
     var inputTraits: SkikoUITextInputTraits = EmptyInputTraits
 
     override fun canBecomeFirstResponder() = true
 
     override fun pressesBegan(presses: Set<*>, withEvent: UIPressesEvent?) {
-        keyboardEventHandler?.pressesBegan(presses, withEvent)
+        onKeyboardPresses(presses)
+
         super.pressesBegan(presses, withEvent)
     }
 
     override fun pressesEnded(presses: Set<*>, withEvent: UIPressesEvent?) {
-        keyboardEventHandler?.pressesEnded(presses, withEvent)
+        onKeyboardPresses(presses)
         super.pressesEnded(presses, withEvent)
     }
 
@@ -481,6 +489,10 @@ internal class IntermediateTextInputUIView(
 
     override fun tokenizer(): UITextInputTokenizerProtocol =
         UITextInputStringTokenizer(textInput = this)
+
+    fun resetOnKeyboardPressesCallback() {
+        onKeyboardPresses = NoOpOnKeyboardPresses
+    }
 }
 
 private class IntermediateTextPosition(val position: Long = 0) : UITextPosition()

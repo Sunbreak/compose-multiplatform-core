@@ -29,7 +29,6 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.InteropViewCatchPointerModifier
 import androidx.compose.ui.layout.EmptyLayout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -58,6 +57,8 @@ import platform.UIKit.didMoveToParentViewController
 import platform.UIKit.removeFromParentViewController
 import platform.UIKit.willMoveToParentViewController
 import androidx.compose.ui.uikit.utils.CMPInteropWrappingView
+import androidx.compose.ui.viewinterop.interopViewAnchor
+import androidx.compose.ui.viewinterop.InteropView
 import kotlinx.cinterop.readValue
 import platform.CoreGraphics.CGRectZero
 
@@ -65,7 +66,11 @@ private val STUB_CALLBACK_WITH_RECEIVER: Any.() -> Unit = {}
 private val DefaultViewResize: UIView.(CValue<CGRect>) -> Unit = { rect -> this.setFrame(rect) }
 private val DefaultViewControllerResize: UIViewController.(CValue<CGRect>) -> Unit = { rect -> this.view.setFrame(rect) }
 
-internal class InteropWrappingView: CMPInteropWrappingView(frame = CGRectZero.readValue()) {
+/**
+ * A [UIView] that contains underlying interop element, such as an independent [UIView]
+ * or [UIViewController]'s root [UIView].
+ */
+internal class InteropWrappingView : CMPInteropWrappingView(frame = CGRectZero.readValue()) {
     var actualAccessibilityContainer: Any? = null
 
     override fun accessibilityContainer(): Any? {
@@ -90,6 +95,20 @@ internal val InteropViewSemanticsKey = AccessibilityKey<InteropWrappingView>(
 )
 
 private var SemanticsPropertyReceiver.interopView by InteropViewSemanticsKey
+
+/**
+ * Add an association with [InteropView] to the modified element.
+ * Allows hit testing and custom pointer input handling for the [InteropView].
+ *
+ * @param isInteractive If `true`, the modifier will be applied. If `false`, returns the original modifier.
+ * @param wrappingView The [InteropWrappingView] to associate with the modified element.
+ */
+private fun Modifier.interopViewAnchor(isInteractive: Boolean, wrappingView: InteropWrappingView): Modifier =
+    if (isInteractive) {
+        this.interopViewAnchor(wrappingView)
+    } else {
+        this
+    }
 
 /**
  * @param factory The block creating the [UIView] to be composed.
@@ -151,13 +170,9 @@ fun <T : UIView> UIKitView(
         }.drawBehind {
             // Clear interop area to make visible the component under our canvas.
             drawRect(Color.Transparent, blendMode = BlendMode.Clear)
-        }.trackUIKitInterop(embeddedInteropComponent.wrappingView).let {
-            if (interactive) {
-                it.then(InteropViewCatchPointerModifier())
-            } else {
-                it
-            }
-        }.semantics {
+        }
+        .interopViewAnchor(interactive, embeddedInteropComponent.wrappingView)
+        .semantics {
             interopView = embeddedInteropComponent.wrappingView
         }
     )
@@ -253,13 +268,9 @@ fun <T : UIViewController> UIKitViewController(
         }.drawBehind {
             // Clear interop area to make visible the component under our canvas.
             drawRect(Color.Transparent, blendMode = BlendMode.Clear)
-        }.trackUIKitInterop(embeddedInteropComponent.wrappingView).let {
-            if (interactive) {
-                it.then(InteropViewCatchPointerModifier())
-            } else {
-                it
-            }
-        }.semantics {
+        }
+        .interopViewAnchor(interactive, embeddedInteropComponent.wrappingView)
+        .semantics {
             interopView = embeddedInteropComponent.wrappingView
         }
     )

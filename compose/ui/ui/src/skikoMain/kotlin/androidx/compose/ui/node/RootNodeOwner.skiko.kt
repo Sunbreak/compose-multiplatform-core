@@ -40,7 +40,6 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.InteropViewCatchPointerModifier
 import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.input.pointer.PointerButtons
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -76,6 +75,8 @@ import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.trace
+import androidx.compose.ui.viewinterop.InteropView
+import androidx.compose.ui.viewinterop.InteropViewAnchorModifierNode
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 import kotlin.math.min
@@ -221,13 +222,16 @@ internal class RootNodeOwner(
     }
 
     /**
-     * If pointerPosition is inside UIKitView, then Compose skip touches. And touches goes to UIKit.
+     * Perform hit test and return the [InteropView] associated with the resulting
+     * [PointerInputModifierNode] node in case it is a [InteropViewAnchorModifierNode], otherwise null.
      */
-    fun hitTestInteropView(position: Offset): Boolean {
+    fun hitTestInteropView(position: Offset): InteropView? {
         val result = HitTestResult()
         owner.root.hitTest(position, result, true)
-        val last = result.lastOrNull()
-        return (last as? BackwardsCompatNode)?.element is InteropViewCatchPointerModifier
+
+        val node = result.lastOrNull() as? InteropViewAnchorModifierNode ?: return null
+
+        return node.interopView
     }
 
     private fun isInBounds(localPosition: Offset): Boolean =
