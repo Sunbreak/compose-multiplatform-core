@@ -144,6 +144,7 @@ package androidx.compose.foundation {
     property public boolean DragGesturePickUpEnabled;
     property public boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     property public boolean isAutomaticNestedPrefetchEnabled;
+    property public boolean isCacheWindowForPagerEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     property public boolean isFlingContinuationAtBoundsEnabled;
     property public boolean isNewContextMenuEnabled;
@@ -157,6 +158,7 @@ package androidx.compose.foundation {
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
     field public static boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     field public static boolean isAutomaticNestedPrefetchEnabled;
+    field public static boolean isCacheWindowForPagerEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     field public static boolean isFlingContinuationAtBoundsEnabled;
     field public static boolean isNewContextMenuEnabled;
