@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+// #import <UIKit/UIKit.h>
+#import <UIKit/UIView.h>
 #import "CMPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN

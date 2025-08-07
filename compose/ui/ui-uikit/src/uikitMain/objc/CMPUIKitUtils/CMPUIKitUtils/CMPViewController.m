@@ -15,6 +15,8 @@
  */
 
 #import "CMPViewController.h"
+#import <UIKit/UIWindowScene.h>
+#import <UIKit/UIWindow.h>
 #import <objc/runtime.h>
 
 #pragma mark - UIViewController + CMPUIKitUtilsPrivate

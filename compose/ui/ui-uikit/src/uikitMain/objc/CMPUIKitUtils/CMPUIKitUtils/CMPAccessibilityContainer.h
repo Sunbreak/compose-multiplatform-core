@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+// #import <UIKit/UIKit.h>
+#import <UIKit/UIAccessibilityElement.h>
 #import "CMPAccessibilityElement.h"
 #import "CMPMacros.h"
 

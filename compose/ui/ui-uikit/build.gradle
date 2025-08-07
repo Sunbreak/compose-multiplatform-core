@@ -114,6 +114,7 @@ def configureCInterop(target, isDevice, architecture) {
                         headers(it)
                     }
                 }
+                compilerOpts("-D_Float16=short")
             }
         }
     }

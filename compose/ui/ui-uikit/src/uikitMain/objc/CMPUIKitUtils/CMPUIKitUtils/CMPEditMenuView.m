@@ -15,6 +15,8 @@
  */
 
 #import "CMPEditMenuView.h"
+#import <UIKit/UIEditMenuInteraction.h>
+#import <UIKit/UIMenuController.h>
 
 @interface CMPEditMenuView() <UIEditMenuInteractionDelegate>
 

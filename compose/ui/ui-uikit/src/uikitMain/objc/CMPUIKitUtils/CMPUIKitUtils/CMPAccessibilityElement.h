@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+// #import <UIKit/UIKit.h>
+#import <UIKit/UIAccessibilityElement.h>
+#import <UIKit/UIAccessibilityCustomAction.h>
+#import <UIKit/UIAccessibilityConstants.h>
+#import <UIKit/UIAccessibility.h>
 #import "CMPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -15,7 +15,8 @@
  */
 
 #import "CMPTextLoupeSession.h"
-#import <UIKit/UIKit.h>
+// #import <UIKit/UIKit.h>
+#import <UIKit/UITextLoupeSession.h>
 
 @implementation CMPTextLoupeSession {
     id _session;
